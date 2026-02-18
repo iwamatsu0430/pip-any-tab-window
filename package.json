@@ -10,7 +10,9 @@
     "test:watch": "vitest",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "package": "npm run build && cd dist && zip -r ../pip-any-tab-window.zip .",
+    "publish": "npm run package && echo 'Package created: pip-any-tab-window.zip'"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.2",

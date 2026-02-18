@@ -2,10 +2,12 @@
   "manifest_version": 3,
   "name": "PiP Any Tab/Window",
   "version": "0.1.0",
-  "description": "Picture-in-Picture any browser tab or native window",
+  "description": "Display any browser tab, window, or screen in a Picture-in-Picture window. Supports zoom, pan, and keeps content always on top.",
+  "minimum_chrome_version": "116",
   "permissions": ["tabs", "activeTab", "scripting", "tabCapture"],
   "icons": {
     "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
   "action": {
@@ -14,6 +16,7 @@
       "32": "icons/icon32.png",
       "48": "icons/icon48.png"
     },
+    "default_title": "Open PiP",
     "default_popup": "src/popup/popup.html"
   },
   "background": {
