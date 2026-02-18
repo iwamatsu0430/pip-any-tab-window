@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PiP Any Tab / Window – Popup Design</title>
 <style>
-  /* ── Design tokens ── */
+  /* ── Design tokens (Dark mode - default) ── */
   :root {
     --bg:         #161616;
     --surface:    #222222;
@@ -15,15 +15,33 @@
     --text-sub:   #888;
     --accent:     #4f9cff;
     --accent-dim: rgba(79,156,255,0.12);
+    --accent-border: rgba(79,156,255,0.18);
+    --shadow:     rgba(0,0,0,0.6);
     --radius-sm:  6px;
     --radius-md:  10px;
+  }
+
+  /* ── Light mode ── */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg:         #ffffff;
+      --surface:    #f5f5f5;
+      --surface-hover: #ebebeb;
+      --border:     rgba(0,0,0,0.08);
+      --text:       #1a1a1a;
+      --text-sub:   #666;
+      --accent:     #0066cc;
+      --accent-dim: rgba(0,102,204,0.08);
+      --accent-border: rgba(0,102,204,0.15);
+      --shadow:     rgba(0,0,0,0.15);
+    }
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   /* ── Wrapper – simulates Chrome popup frame ── */
   body {
-    background: #1a1a2e;
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,7 +55,7 @@
     background: var(--bg);
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 0.5px var(--border);
+    box-shadow: 0 24px 60px var(--shadow), 0 0 0 0.5px var(--border);
   }
 
   /* ── Header ── */
@@ -99,9 +117,9 @@
   .btn.primary {
     background: var(--accent-dim);
     color: var(--accent);
-    border: 1px solid rgba(79,156,255,0.18);
+    border: 1px solid var(--accent-border);
   }
-  .btn.primary:hover { background: rgba(79,156,255,0.18); }
+  .btn.primary:hover { background: var(--accent-border); }
 
   .btn-icon {
     width: 18px;
@@ -230,7 +248,7 @@
     <!-- Header -->
     <div class="header">
       <div class="header-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <rect x="1" y="3" width="14" height="10" rx="2" stroke="#888" stroke-width="1.4"/>
           <rect x="8.5" y="6" width="5.5" height="4" rx="1" fill="#4f9cff"/>
         </svg>
@@ -241,7 +259,7 @@
     <div class="actions">
       <button type="button" class="btn primary" id="captureTab">
         <span class="btn-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/>
             <path d="M4 7h5M4 9.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
@@ -250,7 +268,7 @@
       </button>
       <button type="button" class="btn" id="selectOther">
         <span class="btn-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <rect x="1" y="2.5" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
             <path d="M5.5 14h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
             <path d="M8 11.5V14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
