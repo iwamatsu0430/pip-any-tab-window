@@ -3,3 +3,4 @@ dist/
 *.log
 *.zip
 .DS_Store
+.claude/
