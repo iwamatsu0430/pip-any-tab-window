@@ -3,10 +3,8 @@
   "name": "PiP Any Tab/Window",
   "version": "0.1.0",
   "description": "Picture-in-Picture any browser tab or native window",
-  "permissions": ["tabCapture", "tabs", "activeTab", "scripting"],
-  "action": {
-    "default_popup": "src/popup/popup.html"
-  },
+  "permissions": ["tabs", "activeTab", "scripting"],
+  "action": {},
   "background": {
     "service_worker": "src/background/background.ts"
   }
