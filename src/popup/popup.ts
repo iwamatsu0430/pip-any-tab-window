@@ -11,7 +11,7 @@ function clearError(): void {
   errorDiv.textContent = "";
 }
 
-async function openDocumentPipInTab(): Promise<{ success: boolean; error?: string }> {
+async function captureTabAndOpenPip(): Promise<{ success: boolean; error?: string }> {
   const documentPiP = (window as Window & { documentPictureInPicture?: DocumentPictureInPicture })
     .documentPictureInPicture;
 
@@ -20,25 +20,49 @@ async function openDocumentPipInTab(): Promise<{ success: boolean; error?: strin
   }
 
   try {
-    const pipWindow = await documentPiP.requestWindow({
-      width: 400,
-      height: 300,
+    // Request stream ID from background script
+    const response = await chrome.runtime.sendMessage({ type: "getMediaStreamId" });
+
+    if (response.error) {
+      return { success: false, error: response.error };
+    }
+
+    const { streamId } = response;
+
+    // Get media stream using the stream ID
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        mandatory: {
+          chromeMediaSource: "tab",
+          chromeMediaSourceId: streamId,
+        },
+      } as MediaTrackConstraints,
+      audio: false,
     });
 
-    pipWindow.document.body.innerHTML = `
-      <div style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-        background: #1a1a1a;
-        color: #fff;
-        font-family: system-ui, sans-serif;
-      ">
-        <p>PiP Window Active</p>
-      </div>
-    `;
+    // Create video element
+    const video = document.createElement("video");
+    video.srcObject = stream;
+    video.autoplay = true;
+    video.muted = true;
+    video.style.cssText = "width: 100%; height: 100%; object-fit: contain; background: #000;";
+
+    // Open Document PiP window
+    const pipWindow = await documentPiP.requestWindow({
+      width: 480,
+      height: 270,
+    });
+
+    // Style the PiP window
+    pipWindow.document.body.style.cssText = "margin: 0; padding: 0; overflow: hidden;";
+    pipWindow.document.body.appendChild(video);
+
+    // Clean up when PiP window closes
+    pipWindow.addEventListener("pagehide", () => {
+      for (const track of stream.getTracks()) {
+        track.stop();
+      }
+    });
 
     return { success: true };
   } catch (error) {
@@ -65,7 +89,7 @@ async function openPipWindow(): Promise<void> {
 
     const results = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      func: openDocumentPipInTab,
+      func: captureTabAndOpenPip,
     });
 
     const result = results[0]?.result;

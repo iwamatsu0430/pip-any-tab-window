@@ -6,5 +6,8 @@
   "permissions": ["tabCapture", "tabs", "activeTab", "scripting"],
   "action": {
     "default_popup": "src/popup/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background/background.ts"
   }
 }
