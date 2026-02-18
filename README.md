@@ -2,6 +2,10 @@
 
 Chrome extension to Picture-in-Picture any browser tab or native window.
 
+## DEMO
+
+[![DEMO](http://img.youtube.com/vi/SPbm3bIBP1g/0.jpg)](https://www.youtube.com/watch?v=SPbm3bIBP1g)
+
 ## Overview
 
 This extension allows you to display any tab, window, or screen in a Picture-in-Picture window that stays on top of other windows. It's useful for monitoring terminals (like Ghostty), video calls, or any other content while working on other tasks.
