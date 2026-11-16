@@ -17,6 +17,8 @@ This extension allows you to display any tab, window, or screen in a Picture-in-
 
 ## Setup
 
+Node.js 24 is managed with [mise](https://mise.jdx.dev/): run `mise install` once, and `mise run ci` runs everything CI runs (install, lint, test, build).
+
 ```bash
 # Install dependencies
 npm install
