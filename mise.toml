@@ -1,0 +1,29 @@
+# Toolchain and tasks for pip-any-tab-window. Run `mise install`, then `mise tasks` to list tasks.
+
+[tools]
+node = "24"
+
+[tasks.install]
+description = "Install dependencies from package-lock.json"
+run = "npm ci --no-audit --no-fund"
+
+[tasks.lint]
+description = "Biome lint and format check"
+run = "npm run lint"
+
+[tasks.test]
+description = "Run the unit tests"
+run = "npm test"
+
+[tasks.build]
+description = "Type-check and build the extension into dist/"
+run = "npm run build"
+
+[tasks.ci]
+description = "What CI runs: install, lint, test and build"
+run = [
+  { task = "install" },
+  { task = "lint" },
+  { task = "test" },
+  { task = "build" },
+]
