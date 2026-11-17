@@ -1,0 +1,55 @@
+name: Release
+
+# Publishing a GitHub release (tag vX.Y.Z, matching package.json and
+# manifest.json) builds the extension, attaches the zip to the release and
+# submits it to the Chrome Web Store, which publishes it when it passes review.
+#
+# Needs, in the repository settings:
+#   - secret CWS_SERVICE_ACCOUNT_KEY: JSON key of the service account added in
+#     the Developer Dashboard (Account)
+#   - variable CWS_PUBLISHER_ID: Developer Dashboard > Publisher > Settings
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+
+      - name: Check the tag matches the versions
+        run: |
+          pkg="$(node -p 'require("./package.json").version')"
+          manifest="$(node -p 'require("./manifest.json").version')"
+          if [ "$TAG" != "v$pkg" ] || [ "$TAG" != "v$manifest" ]; then
+            echo "the tag $TAG does not match package.json ($pkg) and manifest.json ($manifest)"
+            exit 1
+          fi
+
+      - name: install, lint, test, build
+        run: mise run ci
+
+      - name: Package
+        run: (cd dist && zip -qr "../pip-any-tab-window-${TAG#v}.zip" .)
+
+      - name: Attach the zip to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "pip-any-tab-window-${TAG#v}.zip" --clobber
+
+      - name: Submit to the Chrome Web Store
+        env:
+          CWS_SERVICE_ACCOUNT_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_ITEM_ID: mefoajcchbdkfeoinphmigekmjhiipap
+        run: ./scripts/cws-publish.sh "pip-any-tab-window-${TAG#v}.zip" "${TAG#v}"
