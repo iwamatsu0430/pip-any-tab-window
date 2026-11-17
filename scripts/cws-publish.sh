@@ -3,6 +3,10 @@
 # (Chrome Web Store API v2). The store publishes it when it passes review.
 #
 # Usage: scripts/cws-publish.sh <zip> <version>
+#        scripts/cws-publish.sh check
+#
+# "check" only signs in and reads the item's status, to confirm the
+# credentials work; it uploads and submits nothing.
 #
 # Environment:
 #   CWS_SERVICE_ACCOUNT_KEY  JSON key of the service account added to the
@@ -11,8 +15,11 @@
 #   CWS_ITEM_ID              the extension's ID in the store
 set -euo pipefail
 
-zip="${1:?usage: cws-publish.sh <zip> <version>}"
-version="${2:?usage: cws-publish.sh <zip> <version>}"
+usage="usage: cws-publish.sh <zip> <version> | cws-publish.sh check"
+zip="${1:?$usage}"
+if [ "$zip" != check ]; then
+  version="${2:?$usage}"
+fi
 : "${CWS_SERVICE_ACCOUNT_KEY:?}" "${CWS_PUBLISHER_ID:?}" "${CWS_ITEM_ID:?}"
 
 api="https://chromewebstore.googleapis.com"
@@ -54,6 +61,12 @@ access_token() {
 token="$(access_token)" || exit 1
 [ -n "${GITHUB_ACTIONS:-}" ] && echo "::add-mask::$token"
 auth=(-H "Authorization: Bearer $token")
+
+if [ "$zip" = check ]; then
+  call "${auth[@]}" "$api/v2/$item:fetchStatus" | jq .
+  echo "Signed in and read the status of $CWS_ITEM_ID."
+  exit 0
+fi
 
 echo "Uploading $zip"
 upload="$(call -X POST "${auth[@]}" -T "$zip" "$api/upload/v2/$item:upload")"
